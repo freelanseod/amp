@@ -1,17 +1,16 @@
 import org.junit.Test;
 
+import static org.junit.Assert.fail;
+
 public class MainClassTest {
     MainClass main = new MainClass();
 
     @Test
-    public void testGetClassNumber() {
-        if (main.getClassNumber() > 45) {
-            System.out.printf("main.getClassNumber() > 45");
-        } else if (main.getClassNumber() < 45) {
-            System.out.printf("main.getClassNumber() < 45");
-        } else {
-            System.out.printf("main.getClassNumber() == 45");
-        }
+    public void testGetClassString() {
 
+        if (main.getClass_string().substring(0, 5).equals("hello") || main.getClass_string().substring(0, 5).equals("Hello")) {
+        } else {
+            fail("getClass_string() doesn't have substring hello or Hello");
+        }
     }
 }
