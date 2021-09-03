@@ -1,10 +1,7 @@
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.TouchAction;
 import io.appium.java_client.android.AndroidDriver;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
@@ -29,6 +26,11 @@ public class FirstTest {
         capabilities.setCapability("app", "/Users/user/projects/courses/mobile/javaAppium/apks/org.wikipedia.apk");
 
         driver = new AndroidDriver(new URL("http://127.0.0.1:4723/wd/hub"), capabilities);
+
+        //skip intro
+        (new TouchAction(driver)).tap(135, 1695).perform();
+        WebElement skipCustomization = driver.findElementById("org.wikipedia:id/view_announcement_action_negative");
+        skipCustomization.click();
     }
 
     @After
@@ -38,11 +40,6 @@ public class FirstTest {
 
     @Test
     public void firstTest() {
-        //skip intro
-        (new TouchAction(driver)).tap(135, 1695).perform();
-        WebElement skipCustomization = driver.findElementById("org.wikipedia:id/view_announcement_action_negative");
-        skipCustomization.click();
-
         //start searching
         waitForElementAndClick(By.xpath("//*[contains(@text,'Search Wikipedia')]"), "can not find element to init search", 5);
 
@@ -65,13 +62,6 @@ public class FirstTest {
 
     @Test
     public void testCancelSearch() {
-
-        //skip intro
-        (new TouchAction(driver)).tap(135, 1695).perform();
-        WebElement skipCustomization = driver.findElementById("org.wikipedia:id/view_announcement_action_negative");
-        skipCustomization.click();
-
-
         waitForElementAndClick(By.id("org.wikipedia:id/search_container"), "can not 'Search wikipedia' input", 5);
 
         waitForElementAndSendKeys(By.id("org.wikipedia:id/search_plate"), "Java", "can not find search input", 5);
@@ -91,8 +81,13 @@ public class FirstTest {
         waitForElementAndSendKeys(By.id("org.wikipedia:id/search_plate"), "Java", "can not find search input", 5);
 
         waitForElementAndClick(By.xpath("//*[contains(@class, 'android.view.ViewGroup')]//*[@text='Object-oriented programming language']"),
-                "",
+                "can't find text element with text 'Object-oriented programming language'",
                 15);
+    }
+
+    @Test
+    public void checkTextFromSearchingInput() {
+        assertElementHasText(By.xpath("//*[contains(@text,'Search Wikipedia')]"), "Search Wikipedia", "", 5);
     }
 
     private WebElement waitForElementPresent(By by, String error_message, long timeoutInSeconds) {
@@ -136,6 +131,11 @@ public class FirstTest {
         element.clear();
 
         return element;
+    }
+
+    private void assertElementHasText(By by, String searchForText, String error_message, long timeoutInSeconds) {
+        WebElement element = waitForElementPresent(by, error_message, timeoutInSeconds);
+        Assert.assertEquals(error_message, searchForText, element.getAttribute("text"));
     }
 
 }
