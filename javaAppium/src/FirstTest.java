@@ -86,8 +86,32 @@ public class FirstTest {
     }
 
     @Test
-    public void checkTextFromSearchingInput() {
-        assertElementHasText(By.xpath("//*[contains(@text,'Search Wikipedia')]"), "Search Wikipedia", "", 5);
+    public void cancelSearching() {
+        //start searching
+        waitForElementAndClick(By.xpath("//*[contains(@text,'Search Wikipedia')]"), "can not find element to init search", 5);
+
+        //page with results
+        WebElement element_to_enter_search_line = driver.findElementById("org.wikipedia:id/search_plate");
+        element_to_enter_search_line.sendKeys("Golang");
+
+        //find articles
+        WebElement title_element_first = waitForElementPresent(By.xpath("//*[contains(@class, 'android.view.ViewGroup')]//*[@text='Go (programming language)']"),
+                "can't find article title ",
+                15);
+        String article_title_first = title_element_first.getAttribute("text");
+
+        WebElement title_element_second = waitForElementPresent(By.xpath("//*[contains(@class, 'android.view.ViewGroup')]//*[@text='Golongu']"),
+                "can't find article title ",
+                15);
+        String article_title_second = title_element_second.getAttribute("text");
+
+        Assert.assertEquals("We see unexpected title", "Go (programming language)", article_title_first);
+        Assert.assertEquals("We see unexpected title", "Golongu", article_title_second);
+
+        //cancel search
+        waitForElementAndClick(By.id("org.wikipedia:id/search_close_btn"), "can not find X to cancel search", 5);
+        waitForElementNotPresent(By.xpath("//*[contains(@class, 'android.view.ViewGroup')]//*[@text='Go (programming language)']"), "Article 'Go (programming language)' is still here", 5);
+        waitForElementNotPresent(By.xpath("//*[contains(@class, 'android.view.ViewGroup')]//*[@text='Golongu']"), "Article 'Golongu' is still here", 5);
     }
 
     private WebElement waitForElementPresent(By by, String error_message, long timeoutInSeconds) {
@@ -131,11 +155,6 @@ public class FirstTest {
         element.clear();
 
         return element;
-    }
-
-    private void assertElementHasText(By by, String searchForText, String error_message, long timeoutInSeconds) {
-        WebElement element = waitForElementPresent(by, error_message, timeoutInSeconds);
-        Assert.assertEquals(error_message, searchForText, element.getAttribute("text"));
     }
 
 }
