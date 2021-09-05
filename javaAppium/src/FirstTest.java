@@ -86,6 +86,11 @@ public class FirstTest {
     }
 
     @Test
+    public void checkTextFromSearchingInput() {
+        assertElementHasText(By.xpath("//*[contains(@text,'Search Wikipedia')]"), "Search Wikipedia", "", 5);
+    }
+
+    @Test
     public void cancelSearching() {
         //start searching
         waitForElementAndClick(By.xpath("//*[contains(@text,'Search Wikipedia')]"), "can not find element to init search", 5);
@@ -112,6 +117,19 @@ public class FirstTest {
         waitForElementAndClick(By.id("org.wikipedia:id/search_close_btn"), "can not find X to cancel search", 5);
         waitForElementNotPresent(By.xpath("//*[contains(@class, 'android.view.ViewGroup')]//*[@text='Go (programming language)']"), "Article 'Go (programming language)' is still here", 5);
         waitForElementNotPresent(By.xpath("//*[contains(@class, 'android.view.ViewGroup')]//*[@text='Golongu']"), "Article 'Golongu' is still here", 5);
+    }
+
+    @Test
+    public void findInSearchCertainWord() {
+        //start searching
+        waitForElementAndClick(By.xpath("//*[contains(@text,'Search Wikipedia')]"), "can not find element to init search", 5);
+
+        waitForElementAndSendKeys(By.id("org.wikipedia:id/search_plate"), "HolidayInn", "can not find search input", 5);
+
+        //find articles with word
+        assertElementHasText(By.xpath("//*[contains(@class, 'android.view.ViewGroup')]//*[@text='Holiday Inn']"), "Holiday Inn", "can't find holiday inn in first article", 5);
+        assertElementHasText(By.xpath("//*[contains(@class, 'android.view.ViewGroup')]//*[@text='Holiday Inn (film)']"), "Holiday Inn (film)", "can't find holiday inn in second article", 5);
+        assertElementHasText(By.xpath("//*[contains(@class, 'android.view.ViewGroup')]//*[@text='Holiday Inn (musical)']"), "Holiday Inn (musical)", "can't find holiday inn in third article", 5);
     }
 
     private WebElement waitForElementPresent(By by, String error_message, long timeoutInSeconds) {
@@ -155,6 +173,11 @@ public class FirstTest {
         element.clear();
 
         return element;
+    }
+
+    private void assertElementHasText(By by, String searchForText, String error_message, long timeoutInSeconds) {
+        WebElement element = waitForElementPresent(by, error_message, timeoutInSeconds);
+        Assert.assertEquals(error_message, searchForText, element.getAttribute("text"));
     }
 
 }
