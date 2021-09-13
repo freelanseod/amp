@@ -262,6 +262,24 @@ public class FirstTest {
                 5);
     }
 
+    @Test
+    public void testFindTitle() {
+        String first_article_name = "Golongu";
+
+        waitForElementAndClick(By.xpath("//*[contains(@text,'Search Wikipedia')]"), "can not find element to init search", 5);
+        waitForElementAndSendKeys(By.id("org.wikipedia:id/search_plate"), "Golang", "can not find search input", 5);
+        waitForElementAndClick(By.xpath("//*[contains(@class, 'android.view.ViewGroup')]//*[@text='" + first_article_name + "']"),
+                "can't find text element with text '" + first_article_name + "'",
+                15);
+
+        assertElementPresent(By.id("pcs-edit-section-title-description"), "there is no title element");
+    }
+
+    private void assertElementPresent(By by, String error_message) {
+        WebElement element = waitForElementPresent(by, error_message, 0);
+        Assert.assertTrue(element.isEnabled());
+    }
+
     private WebElement waitForElementPresent(By by, String error_message, long timeoutInSeconds) {
         WebDriverWait wait = new WebDriverWait(driver, timeoutInSeconds);
         wait.withMessage(error_message + "\n");
