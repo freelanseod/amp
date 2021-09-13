@@ -31,12 +31,11 @@ public class FirstTest {
         capabilities.setCapability("app", "/Users/user/projects/courses/mobile/javaAppium/apks/org.wikipedia.apk");
 
         driver = new AndroidDriver(new URL("http://127.0.0.1:4723/wd/hub"), capabilities);
+        driver.rotate(ScreenOrientation.PORTRAIT);
 
         //skip intro
         (new TouchAction(driver)).tap(135, 1695).perform();
-        // WebElement skipCustomization = driver.findElementById();
         waitForElementAndClick(By.id("org.wikipedia:id/view_announcement_action_negative"), "can't click on skip info button", 10);
-        //skipCustomization.click();
     }
 
     @After
@@ -262,66 +261,6 @@ public class FirstTest {
                 "can't find article after returning from background",
                 5);
     }
-
-    @Test
-    public void saveTwoArticlesToList() {
-        String first_article_name = "Golongu";
-        String second_article_name = "Golangun";
-
-        waitForElementAndClick(By.xpath("//*[contains(@text,'Search Wikipedia')]"), "can not find element to init search", 5);
-        waitForElementAndSendKeys(By.id("org.wikipedia:id/search_plate"), "Golang", "can not find search input", 5);
-        waitForElementAndClick(By.xpath("//*[contains(@class, 'android.view.ViewGroup')]//*[@text='" + first_article_name + "']"),
-                "can't find text element with text '" + first_article_name + "'",
-                15);
-
-        waitForElementPresent(By.xpath("//*[contains(@class, 'android.view.ViewGroup')]//*[@text='" + first_article_name + "']"),
-                "can't find article title ",
-                15);
-
-        waitForElementAndClick(By.id("org.wikipedia:id/article_menu_bookmark"), "can't find save article button", 5);
-
-        waitForElementAndClick(By.id("org.wikipedia:id/snackbar_action"), "can't find save article to list button", 5);
-        waitForElementAndClear(By.id("org.wikipedia:id/text_input"), "can't find list title", 5);
-
-        String name_of_folder = "Test save two articles";
-
-        waitForElementAndSendKeys(By.id("org.wikipedia:id/text_input"), name_of_folder, "can't put text into list title", 5);
-        waitForElementAndClick(By.xpath("//*[@text='OK']"), "can't press OK button", 5);
-        waitForElementNotPresent(By.id("org.wikipedia:id/snackbar_text"), "view list button is still visible", 10);
-
-        //go to search results page
-        ((AndroidDriver) driver).pressKeyCode(AndroidKeyCode.BACK);
-
-        waitForElementAndClick(By.xpath("//*[contains(@class, 'android.view.ViewGroup')]//*[@text='" + second_article_name + "']"),
-                "can't find text element with text 'Golangun'",
-                15);
-
-        waitForElementPresent(By.xpath("//*[contains(@class, 'android.view.ViewGroup')]//*[@text='" + second_article_name + "']"),
-                "can't find article title ",
-                15);
-
-        waitForElementAndClick(By.id("org.wikipedia:id/article_menu_bookmark"), "can't find save article button", 5);
-
-        waitForElementAndClick(By.id("org.wikipedia:id/snackbar_action"), "can't find save article to list button", 5);
-
-        waitForElementAndClick(By.id("org.wikipedia:id/item_title"), "can't click at already saved list title", 10);
-        waitForElementAndClick(By.id("org.wikipedia:id/snackbar_action"), "can't go to " + name_of_folder, 5);
-
-        swipeElementToLeft(By.xpath("//*[@text='" + first_article_name + "']"), "can't find saved article" + first_article_name);
-        waitForElementNotPresent(By.xpath("//*[@text='" + first_article_name + "']"), "can't delete saved article", 5);
-
-        waitForElementPresent(By.xpath("//*[@text='" + second_article_name + "']"), "can't find article " + second_article_name, 5);
-
-        waitForElementAndClick(By.xpath("//*[@text='" + second_article_name + "']"), "can't open article " + second_article_name, 5);
-        waitForElementPresent(By.xpath("//*[contains(@class, 'android.view.View')]//*[@text='Golangun']"), "there is no any article with name " + second_article_name, 10);
-    }
-
-
-
-
-
-
-
 
     private WebElement waitForElementPresent(By by, String error_message, long timeoutInSeconds) {
         WebDriverWait wait = new WebDriverWait(driver, timeoutInSeconds);
