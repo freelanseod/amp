@@ -11,7 +11,6 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-
 import java.net.URL;
 import java.util.List;
 
@@ -31,12 +30,11 @@ public class FirstTest {
         capabilities.setCapability("app", "/Users/user/projects/courses/mobile/javaAppium/apks/org.wikipedia.apk");
 
         driver = new AndroidDriver(new URL("http://127.0.0.1:4723/wd/hub"), capabilities);
+        driver.rotate(ScreenOrientation.PORTRAIT);
 
         //skip intro
         (new TouchAction(driver)).tap(135, 1695).perform();
-        // WebElement skipCustomization = driver.findElementById();
         waitForElementAndClick(By.id("org.wikipedia:id/view_announcement_action_negative"), "can't click on skip info button", 10);
-        //skipCustomization.click();
     }
 
     @After
@@ -264,7 +262,7 @@ public class FirstTest {
     }
 
     @Test
-    public void saveTwoArticlesToList() {
+    public void testSaveTwoArticlesToList() {
         String first_article_name = "Golongu";
         String second_article_name = "Golangun";
 
@@ -316,12 +314,23 @@ public class FirstTest {
         waitForElementPresent(By.xpath("//*[contains(@class, 'android.view.View')]//*[@text='Golangun']"), "there is no any article with name " + second_article_name, 10);
     }
 
+    @Test
+    public void testFindTitle() {
+        String first_article_name = "Golongu";
 
+        waitForElementAndClick(By.xpath("//*[contains(@text,'Search Wikipedia')]"), "can not find element to init search", 5);
+        waitForElementAndSendKeys(By.id("org.wikipedia:id/search_plate"), "Golang", "can not find search input", 5);
+        waitForElementAndClick(By.xpath("//*[contains(@class, 'android.view.ViewGroup')]//*[@text='" + first_article_name + "']"),
+                "can't find text element with text '" + first_article_name + "'",
+                15);
 
+        assertElementPresent(By.id("pcs-edit-section-title-description"), "there is no title element");
+    }
 
-
-
-
+    private void assertElementPresent(By by, String error_message) {
+        WebElement element = waitForElementPresent(by, error_message, 0);
+        Assert.assertTrue(element.isEnabled());
+    }
 
     private WebElement waitForElementPresent(By by, String error_message, long timeoutInSeconds) {
         WebDriverWait wait = new WebDriverWait(driver, timeoutInSeconds);
@@ -418,7 +427,7 @@ public class FirstTest {
     }
 
     private int getAmountOfElements(By by) {
-        List elements =  driver.findElements(by);
+        List elements = driver.findElements(by);
         return elements.size();
     }
 
