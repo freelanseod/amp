@@ -12,10 +12,10 @@ public class NavigationUI extends MainPageObject {
     }
 
     private static final String
-            SAVED_LIST_BUTTON = "//*[@content-desc='Saved']";
+            SAVED_LIST_BUTTON = "xpath://*[@content-desc='Saved']";
 
     public void clickMyLists() {
-        this.waitForElementAndClick(By.xpath(SAVED_LIST_BUTTON), "can't click save lists button", 10);
+        this.waitForElementAndClick(SAVED_LIST_BUTTON, "can't click save lists button", 10);
     }
 
     public void closeKeyboard() {
