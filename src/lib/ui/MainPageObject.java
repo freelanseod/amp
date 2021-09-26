@@ -144,9 +144,9 @@ public class MainPageObject {
         String locator = exploded_locator[1]; //second part of locator_with_type
 
         if (byType.equals("xpath")) {
-            return By.xpath("locator");
+            return By.xpath(locator);
         } else if (byType.equals("id")) {
-            return By.id("locator");
+            return By.id(locator);
         } else {
             throw new IllegalArgumentException("can not get type of locator. Locator: " + locator_with_type);
         }
