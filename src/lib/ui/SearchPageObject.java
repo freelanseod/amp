@@ -6,14 +6,15 @@ import org.openqa.selenium.WebElement;
 
 import java.time.Duration;
 
-public class SearchPageObject extends MainPageObject {
-    private static final String
-            SEARCH_INIT_ELEMENT = "xpath://*[contains(@text,'Search Wikipedia')]",
-            SEARCH_INPUT = "id:org.wikipedia:id/search_plate",
-            SEARCH_RESULT_BY_SUBSTRING_TEMPLATE = "xpath://*[contains(@class, 'android.view.ViewGroup')]//*[@text='{SUBSTRING}']",
-            SEARCH_CANCEL_BUTTON = "id:org.wikipedia:id/search_close_btn",
-            SEARCH_RESULT_LOCATOR = "xpath://*[@resource-id='org.wikipedia:id/page_list_item_title']",
-            SEARCH_EMPTY_RESULT_ELEMENT = "xpath://*[@text='No results']";
+abstract public class SearchPageObject extends MainPageObject {
+    protected static String
+            SEARCH_INIT_ELEMENT,
+            SEARCH_INPUT,
+            SEARCH_RESULT_BY_SUBSTRING_TEMPLATE,
+            SEARCH_CANCEL_BUTTON,
+            SEARCH_CLEAR_FIELD_BUTTON,
+            SEARCH_RESULT_LOCATOR,
+            SEARCH_EMPTY_RESULT_ELEMENT;
 
     public SearchPageObject(AppiumDriver driver) {
         super(driver);
@@ -46,7 +47,7 @@ public class SearchPageObject extends MainPageObject {
 
     public void clickByArticleWithSubstring(String substring) {
         String search_result_xpath = getResultSearchElement(substring);
-        this.waitForElementAndClick(search_result_xpath, "cannot find and click search result with substring " + substring, 10);
+        this.waitForElementAndClick(search_result_xpath, "cannot find and click search result with substring " + substring, 15);
     }
 
     public void waitForCancelButtonToAppear() {

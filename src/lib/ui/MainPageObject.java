@@ -76,13 +76,13 @@ public class MainPageObject {
         int end_y = (int) (size.height * 0.2);
 
         action.press(PointOption.point(x, start_y)).
-                waitAction().
+                waitAction(WaitOptions.waitOptions(Duration.ofMillis(timeOfSwipe))).
                 moveTo(PointOption.point(x, end_y)).
                 release().
                 perform();
     }
 
-    public void swipeUpQuick() {
+        public void swipeUpQuick() {
         swipeUp(200);
     }
 
@@ -100,6 +100,29 @@ public class MainPageObject {
             swipeUpQuick();
             ++already_swiped;
         }
+    }
+
+    public void swipeUpTillElementAppear(String locator, String error_message, int max_swipes) {
+        int already_swiped = 0;
+
+        while (!this.isElementLocatedOnTheScreen(locator)) {
+            if (already_swiped > max_swipes) {
+                Assert.assertTrue(error_message, this.isElementLocatedOnTheScreen(locator));
+            }
+        }
+
+        swipeUpQuick();
+        ++already_swiped;
+    }
+
+    public boolean isElementLocatedOnTheScreen(String locator) {
+        int element_location_by_y = this.waitForElementPresent(locator, "can not find element by locator", 5).getLocation().getY();
+        int screen_size_by_y = driver.manage().window().getSize().getHeight();
+
+        System.out.println("element_location_by_y " + element_location_by_y);
+        System.out.println("screen_size_by_y " + screen_size_by_y);
+
+        return element_location_by_y < screen_size_by_y;
     }
 
     public void swipeElementToLeft(String locator, String error_message) {
@@ -150,6 +173,22 @@ public class MainPageObject {
         } else {
             throw new IllegalArgumentException("can not get type of locator. Locator: " + locator_with_type);
         }
+    }
+
+    public void clickElementToTheRightUpperCorner(String locator, String error_message) {
+        WebElement element = this.waitForElementPresent(locator + "/..", error_message, 10); //up dom level
+
+        int right_x = element.getLocation().getX();
+        int upper_y = element.getLocation().getY();
+        int lower_y = upper_y + element.getSize().getHeight();
+        int middle_y = (upper_y + lower_y) / 2;
+        int width = element.getSize().getWidth();
+
+        int point_to_click_x = (right_x + width) - 3; //point to the left minus 3 px than all width
+        int point_to_click_y = middle_y;
+
+        TouchAction action = new TouchAction(driver);
+        action.tap(PointOption.point(point_to_click_x, point_to_click_y)).perform();
     }
 
 }
