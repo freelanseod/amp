@@ -119,9 +119,6 @@ public class MainPageObject {
         int element_location_by_y = this.waitForElementPresent(locator, "can not find element by locator", 5).getLocation().getY();
         int screen_size_by_y = driver.manage().window().getSize().getHeight();
 
-        System.out.println("element_location_by_y " + element_location_by_y);
-        System.out.println("screen_size_by_y " + screen_size_by_y);
-
         return element_location_by_y < screen_size_by_y;
     }
 
