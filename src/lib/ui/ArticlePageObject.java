@@ -1,22 +1,23 @@
 package lib.ui;
 
 import io.appium.java_client.AppiumDriver;
+import lib.Platform;
 import org.openqa.selenium.WebElement;
 
-public class ArticlePageObject extends MainPageObject {
+public abstract class ArticlePageObject extends MainPageObject {
 
     public ArticlePageObject(AppiumDriver driver) {
         super(driver);
     }
 
-    private static final String
-            ARTICLE_TITLE_TEMPLATE = "xpath://*[@content-desc='{SUBSTRING}']",
-            FOOTER_ELEMENT = "xpath://*[@text='View article in browser']",
-            SAVE_ARTICLE_BUTTON = "id:org.wikipedia:id/article_menu_bookmark",
-            SAVE_ARTICLE_TO_MY_LIST_BUTTON = "id:org.wikipedia:id/snackbar_action",
-            MY_LIST_NAME_INPUT = "id:org.wikipedia:id/text_input",
-            MY_LIST_OK_BUTTON = "xpath://*[@text='OK']",
-            MY_LIST_BUTTON = "id:org.wikipedia:id/snackbar_text";
+    protected static String
+            ARTICLE_TITLE_TEMPLATE,
+            FOOTER_ELEMENT,
+            SAVE_ARTICLE_BUTTON,
+            SAVE_ARTICLE_TO_MY_LIST_BUTTON,
+            MY_LIST_NAME_INPUT,
+            MY_LIST_OK_BUTTON,
+            MY_LIST_BUTTON;
 
     /* TEMPLATES METHODS */
     private static String getResultTitleElement(String substring) {
@@ -31,11 +32,19 @@ public class ArticlePageObject extends MainPageObject {
 
     public String getArticleTitle(String article) {
         WebElement title_element = waitForTitleElement(article);
-        return title_element.getAttribute("text");
+        if (Platform.getInstance().isAndroid()) {
+            return title_element.getAttribute("text");
+        } else {
+            return title_element.getAttribute("name");
+        }
     }
 
     public void swipeToFooter() {
-        this.swipeUpToFindElement(FOOTER_ELEMENT, "can't find the end of article", 20);
+        if (Platform.getInstance().isAndroid()) {
+            this.swipeUpToFindElement(FOOTER_ELEMENT, "can't find the end of article", 100);
+        } else {
+            this.swipeUpTillElementAppear(FOOTER_ELEMENT, "can't find the end of article", 40);
+        }
     }
 
     public void addArticleToMyList(String name_of_folder) {
@@ -46,6 +55,10 @@ public class ArticlePageObject extends MainPageObject {
         this.waitForElementAndSendKeys(MY_LIST_NAME_INPUT, name_of_folder, "can't put text into list title", 5);
         this.waitForElementAndClick(MY_LIST_OK_BUTTON, "can't press OK button", 5);
         this.waitForElementNotPresent(MY_LIST_BUTTON, "view list button is still visible", 10);
+    }
+
+    public void addArticlesToMySaved() {
+        this.waitForElementAndClick(SAVE_ARTICLE_TO_MY_LIST_BUTTON, "can not find option to add article to reading list", 5);
     }
 
 }
